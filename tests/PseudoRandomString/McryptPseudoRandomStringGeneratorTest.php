@@ -25,15 +25,14 @@ namespace Facebook\Tests\PseudoRandomString;
 
 use Facebook\PseudoRandomString\McryptPseudoRandomStringGenerator;
 
-class McryptPseudoRandomStringGeneratorTest extends \PHPUnit_Framework_TestCase
+class McryptPseudoRandomStringGeneratorTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     public function testCanGenerateRandomStringOfArbitraryLength()
     {
-        if (version_compare(PHP_VERSION, '7.1', '>=')) {
-            $this->markTestSkipped('Skipping test mcrypt is deprecated from 7.1');
-        }
-
         if (!function_exists('mcrypt_create_iv')) {
+            if (version_compare(PHP_VERSION, '7.1', '>=')) {
+                $this->markTestSkipped('Skipping as mcrypt is deprecated from PHP 7.1+');
+            }
             $this->markTestSkipped(
                 'Mcrypt must be installed to test mcrypt_create_iv().'
             );

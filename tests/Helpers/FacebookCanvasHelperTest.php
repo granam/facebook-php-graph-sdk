@@ -27,7 +27,7 @@ use Facebook\FacebookApp;
 use Facebook\FacebookClient;
 use Facebook\Helpers\FacebookCanvasHelper;
 
-class FacebookCanvasHelperTest extends \PHPUnit_Framework_TestCase
+class FacebookCanvasHelperTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     public $rawSignedRequestAuthorized = 'vdZXlVEQ5NTRRTFvJ7Jeo_kP4SKnBDvbNP0fEYKS0Sg=.eyJvYXV0aF90b2tlbiI6ImZvb190b2tlbiIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNDAyNTUxMDMxLCJ1c2VyX2lkIjoiMTIzIn0=';
 
@@ -36,7 +36,7 @@ class FacebookCanvasHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->helper = new FacebookCanvasHelper($app, new FacebookClient());

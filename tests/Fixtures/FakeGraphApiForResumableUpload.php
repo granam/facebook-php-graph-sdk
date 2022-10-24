@@ -111,7 +111,7 @@ class FakeGraphApiForResumableUpload implements FacebookHttpClientInterface
 
         return new GraphRawResponse(
             "HTTP/1.1 200 OK\r\nFoo: Bar",
-            json_encode($data)
+            json_encode($data, JSON_THROW_ON_ERROR)
         );
     }
 

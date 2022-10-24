@@ -28,14 +28,14 @@ use Facebook\FacebookRequest;
 use Facebook\FacebookResponse;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
+class GraphNodeFactoryTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var \Facebook\FacebookRequest
      */
     protected $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->request = new FacebookRequest(
@@ -49,6 +49,9 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAValidGraphNodeResponseWillNotThrow()
     {
         $data = '{"id":"123","name":"foo"}';
@@ -58,11 +61,9 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $factory->validateResponseCastableAsGraphNode();
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
     public function testANonGraphNodeResponseWillThrow()
     {
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
         $data = '{"data":[{"id":"123","name":"foo"},{"id":"1337","name":"bar"}]}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -70,6 +71,9 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $factory->validateResponseCastableAsGraphNode();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testAValidGraphEdgeResponseWillNotThrow()
     {
         $data = '{"data":[{"id":"123","name":"foo"},{"id":"1337","name":"bar"}]}';
@@ -79,11 +83,9 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $factory->validateResponseCastableAsGraphEdge();
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
     public function testANonGraphEdgeResponseWillThrow()
     {
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
         $data = '{"id":"123","name":"foo"}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -102,19 +104,20 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($shouldFail, 'Expected the given array to not be castable as a GraphEdge.');
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
     public function testInvalidSubClassesWillThrow()
     {
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
         GraphNodeFactory::validateSubclass('FooSubClass');
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testValidSubClassesWillNotThrow()
     {
-        GraphNodeFactory::validateSubclass('\Facebook\GraphNodes\GraphNode');
-        GraphNodeFactory::validateSubclass('\Facebook\GraphNodes\GraphAlbum');
-        GraphNodeFactory::validateSubclass('\Facebook\Tests\Fixtures\MyFooGraphNode');
+        GraphNodeFactory::validateSubclass(\Facebook\GraphNodes\GraphNode::class);
+        GraphNodeFactory::validateSubclass(\Facebook\GraphNodes\GraphAlbum::class);
+        GraphNodeFactory::validateSubclass(\Facebook\Tests\Fixtures\MyFooGraphNode::class);
     }
 
     public function testCastingAsASubClassObjectWillInstantiateTheSubClass()
@@ -123,9 +126,9 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $res = new FacebookResponse($this->request, $data);
 
         $factory = new GraphNodeFactory($res);
-        $mySubClassObject = $factory->makeGraphNode('\Facebook\Tests\Fixtures\MyFooGraphNode');
+        $mySubClassObject = $factory->makeGraphNode(\Facebook\Tests\Fixtures\MyFooGraphNode::class);
 
-        $this->assertInstanceOf('\Facebook\Tests\Fixtures\MyFooGraphNode', $mySubClassObject);
+        $this->assertInstanceOf(\Facebook\Tests\Fixtures\MyFooGraphNode::class, $mySubClassObject);
     }
 
     public function testASubClassMappingWillAutomaticallyInstantiateSubClass()
@@ -134,11 +137,11 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $res = new FacebookResponse($this->request, $data);
 
         $factory = new GraphNodeFactory($res);
-        $mySubClassObject = $factory->makeGraphNode('\Facebook\Tests\Fixtures\MyFooGraphNode');
+        $mySubClassObject = $factory->makeGraphNode(\Facebook\Tests\Fixtures\MyFooGraphNode::class);
         $fooObject = $mySubClassObject->getField('foo_object');
 
-        $this->assertInstanceOf('\Facebook\Tests\Fixtures\MyFooGraphNode', $mySubClassObject);
-        $this->assertInstanceOf('\Facebook\Tests\Fixtures\MyFooSubClassGraphNode', $fooObject);
+        $this->assertInstanceOf(\Facebook\Tests\Fixtures\MyFooGraphNode::class, $mySubClassObject);
+        $this->assertInstanceOf(\Facebook\Tests\Fixtures\MyFooSubClassGraphNode::class, $fooObject);
     }
 
     public function testAnUnknownGraphNodeWillBeCastAsAGenericGraphNode()
@@ -155,12 +158,12 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory = new GraphNodeFactory($res);
 
-        $mySubClassObject = $factory->makeGraphNode('\Facebook\Tests\Fixtures\MyFooGraphNode');
+        $mySubClassObject = $factory->makeGraphNode(\Facebook\Tests\Fixtures\MyFooGraphNode::class);
         $unknownObject = $mySubClassObject->getField('unknown_object');
 
-        $this->assertInstanceOf('\Facebook\Tests\Fixtures\MyFooGraphNode', $mySubClassObject);
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $unknownObject);
-        $this->assertNotInstanceOf('\Facebook\Tests\Fixtures\MyFooGraphNode', $unknownObject);
+        $this->assertInstanceOf(\Facebook\Tests\Fixtures\MyFooGraphNode::class, $mySubClassObject);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $unknownObject);
+        $this->assertNotInstanceOf(\Facebook\Tests\Fixtures\MyFooGraphNode::class, $unknownObject);
     }
 
     public function testAListFromGraphWillBeCastAsAGraphEdge()
@@ -189,7 +192,7 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $graphEdge = $factory->makeGraphEdge();
         $graphData = $graphEdge->asArray();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphEdge', $graphEdge);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphEdge::class, $graphEdge);
         $this->assertEquals([
             'id' => '123',
             'name' => 'Foo McBar',
@@ -215,7 +218,7 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $graphNode = $factory->makeGraphNode();
         $graphData = $graphNode->asArray();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphNode);
         $this->assertEquals([
             'id' => '123',
             'name' => 'Foo McBar',
@@ -239,7 +242,7 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $graphNode = $factory->makeGraphNode();
         $graphData = $graphNode->asArray();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphNode);
         $this->assertEquals([
             'id' => '123',
             'name' => 'Foo McBar',
@@ -262,7 +265,7 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new GraphNodeFactory($res);
         $graphNode = $factory->makeGraphNode();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphNode);
 
         $graphData = $graphNode->asArray();
 
@@ -360,24 +363,24 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory = new GraphNodeFactory($res);
         $graphNode = $factory->makeGraphEdge();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphEdge', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphEdge::class, $graphNode);
 
         // Story
         $storyObject = $graphNode[0];
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $storyObject['from']);
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphEdge', $storyObject['likes']);
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphEdge', $storyObject['comments']);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $storyObject['from']);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphEdge::class, $storyObject['likes']);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphEdge::class, $storyObject['comments']);
 
         // Story Comments
         $storyComments = $storyObject['comments'];
         $firstStoryComment = $storyComments[0];
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $firstStoryComment['from']);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $firstStoryComment['from']);
 
         // Message
         $messageObject = $graphNode[1];
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphEdge', $messageObject['to']);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphEdge::class, $messageObject['to']);
         $toUsers = $messageObject['to'];
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphNode', $toUsers[0]);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $toUsers[0]);
     }
 
     public function testAGraphEdgeWillGenerateTheProperParentGraphEdges()

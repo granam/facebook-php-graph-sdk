@@ -31,7 +31,7 @@ use Facebook\PersistentData\FacebookMemoryPersistentDataHandler;
 use Facebook\Tests\Fixtures\FooPseudoRandomStringGenerator;
 use Facebook\Tests\Fixtures\FooRedirectLoginOAuth2Client;
 
-class FacebookRedirectLoginHelperTest extends \PHPUnit_Framework_TestCase
+class FacebookRedirectLoginHelperTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var FacebookMemoryPersistentDataHandler
@@ -43,13 +43,13 @@ class FacebookRedirectLoginHelperTest extends \PHPUnit_Framework_TestCase
      */
     protected $redirectLoginHelper;
 
-    const REDIRECT_URL = 'http://invalid.zzz';
-    const FOO_CODE = "foo_code";
-    const FOO_ENFORCE_HTTPS = "foo_enforce_https";
-    const FOO_STATE = "foo_state";
-    const FOO_PARAM = "some_param=blah";
+    public const REDIRECT_URL = 'http://invalid.zzz';
+    public const FOO_CODE = "foo_code";
+    public const FOO_ENFORCE_HTTPS = "foo_enforce_https";
+    public const FOO_STATE = "foo_state";
+    public const FOO_PARAM = "some_param=blah";
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->persistentDataHandler = new FacebookMemoryPersistentDataHandler();
 
@@ -74,7 +74,7 @@ class FacebookRedirectLoginHelperTest extends \PHPUnit_Framework_TestCase
             'scope' => implode(',', $scope),
         ];
         foreach ($params as $key => $value) {
-            $this->assertContains($key . '=' . urlencode($value), $loginUrl);
+            $this->assertStringContainsString($key . '=' . urlencode($value), $loginUrl);
         }
     }
 
@@ -123,13 +123,13 @@ class FacebookRedirectLoginHelperTest extends \PHPUnit_Framework_TestCase
 
         $loginUrl = $helper->getLoginUrl(self::REDIRECT_URL);
 
-        $this->assertContains('state=csprs123', $loginUrl);
+        $this->assertStringContainsString('state=csprs123', $loginUrl);
     }
 
     public function testThePseudoRandomStringGeneratorWillAutoDetectCsprsg()
     {
         $this->assertInstanceOf(
-            'Facebook\PseudoRandomString\PseudoRandomStringGeneratorInterface',
+            \Facebook\PseudoRandomString\PseudoRandomStringGeneratorInterface::class,
             $this->redirectLoginHelper->getPseudoRandomStringGenerator()
         );
     }

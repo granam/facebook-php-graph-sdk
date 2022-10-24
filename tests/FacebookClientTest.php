@@ -31,6 +31,7 @@ use Facebook\FacebookBatchRequest;
 use Facebook\FacebookClient;
 use Facebook\FileUpload\FacebookFile;
 use Facebook\FileUpload\FacebookVideo;
+
 // These are needed when you uncomment the HTTP clients below.
 use Facebook\HttpClients\FacebookCurlHttpClient;
 use Facebook\HttpClients\FacebookGuzzleHttpClient;
@@ -38,7 +39,7 @@ use Facebook\HttpClients\FacebookStreamHttpClient;
 use Facebook\Tests\Fixtures\MyFooBatchClientHandler;
 use Facebook\Tests\Fixtures\MyFooClientHandler;
 
-class FacebookClientTest extends \PHPUnit_Framework_TestCase
+class FacebookClientTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var FacebookApp
@@ -60,7 +61,7 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
      */
     public static $testFacebookClient;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fbApp = new FacebookApp('id', 'shhhh!');
         $this->fbClient = new FacebookClient(new MyFooClientHandler());
@@ -72,7 +73,7 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         $client = new FacebookClient($handler);
         $httpHandler = $client->getHttpClientHandler();
 
-        $this->assertInstanceOf('Facebook\Tests\Fixtures\MyFooClientHandler', $httpHandler);
+        $this->assertInstanceOf(\Facebook\Tests\Fixtures\MyFooClientHandler::class, $httpHandler);
     }
 
     public function testTheHttpClientWillFallbackToDefault()
@@ -81,9 +82,9 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         $httpHandler = $client->getHttpClientHandler();
 
         if (function_exists('curl_init')) {
-            $this->assertInstanceOf('Facebook\HttpClients\FacebookCurlHttpClient', $httpHandler);
+            $this->assertInstanceOf(\Facebook\HttpClients\FacebookCurlHttpClient::class, $httpHandler);
         } else {
-            $this->assertInstanceOf('Facebook\HttpClients\FacebookStreamHttpClient', $httpHandler);
+            $this->assertInstanceOf(\Facebook\HttpClients\FacebookStreamHttpClient::class, $httpHandler);
         }
     }
 
@@ -127,7 +128,7 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         $fbRequest = new FacebookRequest($this->fbApp, 'token', 'GET', '/foo');
         $response = $this->fbClient->sendRequest($fbRequest);
 
-        $this->assertInstanceOf('Facebook\FacebookResponse', $response);
+        $this->assertInstanceOf(\Facebook\FacebookResponse::class, $response);
         $this->assertEquals(200, $response->getHttpStatusCode());
         $this->assertEquals('{"data":[{"id":"123","name":"Foo"},{"id":"1337","name":"Bar"}]}', $response->getBody());
     }
@@ -143,7 +144,7 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         $fbBatchClient = new FacebookClient(new MyFooBatchClientHandler());
         $response = $fbBatchClient->sendBatchRequest($fbBatchRequest);
 
-        $this->assertInstanceOf('Facebook\FacebookBatchResponse', $response);
+        $this->assertInstanceOf(\Facebook\FacebookBatchResponse::class, $response);
         $this->assertEquals('GET', $response[0]->getRequest()->getMethod());
         $this->assertEquals('POST', $response[1]->getRequest()->getMethod());
     }
@@ -163,16 +164,16 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         $fbBatchRequest = new FacebookBatchRequest($this->fbApp, $fbRequests);
         $fbBatchRequest->prepareRequestsForBatch();
 
-        list($url, $method, $headers, $body) = $this->fbClient->prepareRequestMessage($fbBatchRequest);
+        [$url, $method, $headers, $body] = $this->fbClient->prepareRequestMessage($fbBatchRequest);
 
         $this->assertEquals(FacebookClient::BASE_GRAPH_VIDEO_URL . '/' . Facebook::DEFAULT_GRAPH_VERSION, $url);
         $this->assertEquals('POST', $method);
-        $this->assertContains('multipart/form-data; boundary=', $headers['Content-Type']);
-        $this->assertContains('Content-Disposition: form-data; name="batch"', $body);
-        $this->assertContains('Content-Disposition: form-data; name="include_headers"', $body);
-        $this->assertContains('"name":0,"attached_files":', $body);
-        $this->assertContains('"name":1,"attached_files":', $body);
-        $this->assertContains('"; filename="foo.txt"', $body);
+        $this->assertStringContainsString('multipart/form-data; boundary=', $headers['Content-Type']);
+        $this->assertStringContainsString('Content-Disposition: form-data; name="batch"', $body);
+        $this->assertStringContainsString('Content-Disposition: form-data; name="include_headers"', $body);
+        $this->assertStringContainsString('"name":0,"attached_files":', $body);
+        $this->assertStringContainsString('"name":1,"attached_files":', $body);
+        $this->assertStringContainsString('"; filename="foo.txt"', $body);
     }
 
     public function testARequestOfParamsWillBeUrlEncoded()
@@ -193,12 +194,12 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
 
         $headersSent = $response->getRequest()->getHeaders();
 
-        $this->assertContains('multipart/form-data; boundary=', $headersSent['Content-Type']);
+        $this->assertStringContainsString('multipart/form-data; boundary=', $headersSent['Content-Type']);
     }
 
     public function testAFacebookRequestValidatesTheAccessTokenWhenOneIsNotProvided()
     {
-        $this->setExpectedException('Facebook\Exceptions\FacebookSDKException');
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
 
         $fbRequest = new FacebookRequest($this->fbApp, null, 'GET', '/foo');
         $this->fbClient->sendRequest($fbRequest);
@@ -241,7 +242,7 @@ class FacebookClientTest extends \PHPUnit_Framework_TestCase
         );
         $graphNode = static::$testFacebookClient->sendRequest($request)->getGraphNode();
 
-        $this->assertInstanceOf('Facebook\GraphNodes\GraphNode', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphNode);
         $this->assertNotNull($graphNode->getField('id'));
         $this->assertEquals('Foo Phpunit User', $graphNode->getField('name'));
 

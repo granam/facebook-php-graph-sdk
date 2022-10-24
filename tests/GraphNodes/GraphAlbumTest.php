@@ -26,7 +26,7 @@ namespace Facebook\Tests\GraphNodes;
 use Mockery as m;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-class GraphAlbumTest extends \PHPUnit_Framework_TestCase
+class GraphAlbumTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
 
     /**
@@ -34,9 +34,9 @@ class GraphAlbumTest extends \PHPUnit_Framework_TestCase
      */
     protected $responseMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->responseMock = m::mock('\\Facebook\\FacebookResponse');
+        $this->responseMock = m::mock(\Facebook\FacebookResponse::class);
     }
 
     public function testDatesGetCastToDateTime()
@@ -81,7 +81,7 @@ class GraphAlbumTest extends \PHPUnit_Framework_TestCase
 
         $from = $graphNode->getFrom();
 
-        $this->assertInstanceOf('\\Facebook\\GraphNodes\\GraphUser', $from);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphUser::class, $from);
     }
 
     public function testPlacePropertyWillGetCastAsGraphPageObject()
@@ -104,6 +104,6 @@ class GraphAlbumTest extends \PHPUnit_Framework_TestCase
 
         $place = $graphNode->getPlace();
 
-        $this->assertInstanceOf('\\Facebook\\GraphNodes\\GraphPage', $place);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphPage::class, $place);
     }
 }

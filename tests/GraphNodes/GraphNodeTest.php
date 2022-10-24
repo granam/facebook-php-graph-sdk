@@ -25,7 +25,7 @@ namespace Facebook\Tests\GraphNodes;
 
 use Facebook\GraphNodes\GraphNode;
 
-class GraphNodeTest extends \PHPUnit_Framework_TestCase
+class GraphNodeTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     public function testAnEmptyBaseGraphNodeCanInstantiate()
     {

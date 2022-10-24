@@ -31,14 +31,14 @@ use Facebook\FacebookResponse;
 /**
  * @todo v6: Remove this test
  */
-class GraphObjectFactoryTest extends \PHPUnit_Framework_TestCase
+class GraphObjectFactoryTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var \Facebook\FacebookRequest
      */
     protected $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->request = new FacebookRequest(
@@ -65,7 +65,7 @@ class GraphObjectFactoryTest extends \PHPUnit_Framework_TestCase
         $graphObject = $factory->makeGraphObject();
         $graphData = $graphObject->asArray();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphObject', $graphObject);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphObject::class, $graphObject);
         $this->assertEquals([
             'id' => '123',
             'name' => 'Foo McBar',
@@ -99,7 +99,7 @@ class GraphObjectFactoryTest extends \PHPUnit_Framework_TestCase
         $graphList = $factory->makeGraphList();
         $graphData = $graphList->asArray();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphList', $graphList);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphList::class, $graphList);
         $this->assertEquals([
           'id' => '123',
           'name' => 'Foo McBar',

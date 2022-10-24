@@ -57,7 +57,7 @@ class GraphAchievementTest extends AbstractGraphNode
     public function testNoFeedStoryIsBoolean()
     {
         $dataFromGraph = [
-            'no_feed_story' => (rand(0, 1) == 1)
+            'no_feed_story' => (random_int(0, 1) == 1)
         ];
 
         $factory = $this->makeFactoryWithData($dataFromGraph);
@@ -96,7 +96,7 @@ class GraphAchievementTest extends AbstractGraphNode
 
         $from = $graphNode->getFrom();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphUser', $from);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphUser::class, $from);
     }
 
     public function testApplicationGetsCastAsGraphApplication()
@@ -112,6 +112,6 @@ class GraphAchievementTest extends AbstractGraphNode
 
         $app = $graphNode->getApplication();
 
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphApplication', $app);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphApplication::class, $app);
     }
 }

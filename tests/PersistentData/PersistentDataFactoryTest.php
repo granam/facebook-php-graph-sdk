@@ -26,12 +26,12 @@ namespace Facebook\Tests\PersistentData;
 use Facebook\PersistentData\FacebookMemoryPersistentDataHandler;
 use Facebook\PersistentData\FacebookSessionPersistentDataHandler;
 use Facebook\PersistentData\PersistentDataFactory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class PersistentDataFactoryTest extends PHPUnit_Framework_TestCase
+class PersistentDataFactoryTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
-    const COMMON_NAMESPACE = 'Facebook\PersistentData\\';
-    const COMMON_INTERFACE = 'Facebook\PersistentData\PersistentDataInterface';
+    public const COMMON_NAMESPACE = 'Facebook\PersistentData\\';
+    public const COMMON_INTERFACE = 'Facebook\PersistentData\PersistentDataInterface';
 
     /**
      * @param mixed  $handler

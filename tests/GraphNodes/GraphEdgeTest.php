@@ -28,7 +28,7 @@ use Facebook\FacebookRequest;
 use Facebook\GraphNodes\GraphEdge;
 use Facebook\GraphNodes\GraphNode;
 
-class GraphEdgeTest extends \PHPUnit_Framework_TestCase
+class GraphEdgeTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
 
     /**
@@ -41,7 +41,7 @@ class GraphEdgeTest extends \PHPUnit_Framework_TestCase
         'previous' => 'https://graph.facebook.com/v7.12/998899/photos?pretty=0&limit=25&before=foo_before_cursor',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->request = new FacebookRequest(
@@ -55,11 +55,9 @@ class GraphEdgeTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
     public function testNonGetRequestsWillThrow()
     {
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
         $this->request->setMethod('POST');
         $graphEdge = new GraphEdge($this->request);
         $graphEdge->validateForPagination();
@@ -90,8 +88,8 @@ class GraphEdgeTest extends \PHPUnit_Framework_TestCase
         $nextPage = $graphEdge->getNextPageRequest();
         $prevPage = $graphEdge->getPreviousPageRequest();
 
-        $this->assertInstanceOf('Facebook\FacebookRequest', $nextPage);
-        $this->assertInstanceOf('Facebook\FacebookRequest', $prevPage);
+        $this->assertInstanceOf(\Facebook\FacebookRequest::class, $nextPage);
+        $this->assertInstanceOf(\Facebook\FacebookRequest::class, $prevPage);
         $this->assertNotSame($this->request, $nextPage);
         $this->assertNotSame($this->request, $prevPage);
         $this->assertEquals('/v1337/998899/photos?access_token=foo_token&after=foo_after_cursor&appsecret_proof=857d5f035a894f16b4180f19966e055cdeab92d4d53017b13dccd6d43b6497af&foo=bar&limit=25&pretty=0', $nextPage->getUrl());

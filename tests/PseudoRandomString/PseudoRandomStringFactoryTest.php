@@ -24,12 +24,12 @@
 namespace Facebook\Tests\PseudoRandomString;
 
 use Facebook\PseudoRandomString\PseudoRandomStringGeneratorFactory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class PseudoRandomStringFactoryTest extends PHPUnit_Framework_TestCase
+class PseudoRandomStringFactoryTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
-    const COMMON_NAMESPACE = 'Facebook\PseudoRandomString\\';
-    const COMMON_INTERFACE = 'Facebook\PseudoRandomString\PseudoRandomStringGeneratorInterface';
+    public const COMMON_NAMESPACE = 'Facebook\PseudoRandomString\\';
+    public const COMMON_INTERFACE = 'Facebook\PseudoRandomString\PseudoRandomStringGeneratorInterface';
 
     /**
      * @param mixed  $handler

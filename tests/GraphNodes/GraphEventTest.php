@@ -27,16 +27,16 @@ use Facebook\FacebookResponse;
 use Mockery as m;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-class GraphEventTest extends \PHPUnit_Framework_TestCase
+class GraphEventTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var FacebookResponse
      */
     protected $responseMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->responseMock = m::mock('\Facebook\FacebookResponse');
+        $this->responseMock = m::mock(\Facebook\FacebookResponse::class);
     }
 
     public function testCoverGetsCastAsGraphCoverPhoto()
@@ -53,7 +53,7 @@ class GraphEventTest extends \PHPUnit_Framework_TestCase
         $graphObject = $factory->makeGraphEvent();
 
         $cover = $graphObject->getCover();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphCoverPhoto', $cover);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphCoverPhoto::class, $cover);
     }
 
     public function testPlaceGetsCastAsGraphPage()
@@ -70,7 +70,7 @@ class GraphEventTest extends \PHPUnit_Framework_TestCase
         $graphObject = $factory->makeGraphEvent();
 
         $place = $graphObject->getPlace();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphPage', $place);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphPage::class, $place);
     }
 
     public function testPictureGetsCastAsGraphPicture()
@@ -87,7 +87,7 @@ class GraphEventTest extends \PHPUnit_Framework_TestCase
         $graphObject = $factory->makeGraphEvent();
 
         $picture = $graphObject->getPicture();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphPicture', $picture);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphPicture::class, $picture);
     }
 
     public function testParentGroupGetsCastAsGraphGroup()
@@ -104,6 +104,6 @@ class GraphEventTest extends \PHPUnit_Framework_TestCase
         $graphObject = $factory->makeGraphEvent();
 
         $parentGroup = $graphObject->getParentGroup();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphGroup', $parentGroup);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphGroup::class, $parentGroup);
     }
 }

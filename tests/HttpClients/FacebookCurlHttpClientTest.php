@@ -38,15 +38,15 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
      */
     protected $curlClient;
 
-    const CURL_VERSION_STABLE = 0x072400;
-    const CURL_VERSION_BUGGY = 0x071400;
+    public const CURL_VERSION_STABLE = 0x072400;
+    public const CURL_VERSION_BUGGY = 0x071400;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (!extension_loaded('curl')) {
             $this->markTestSkipped('cURL must be installed to test cURL client handler.');
         }
-        $this->curlMock = m::mock('Facebook\HttpClients\FacebookCurl');
+        $this->curlMock = m::mock(\Facebook\HttpClients\FacebookCurl::class);
         $this->curlClient = new FacebookCurlHttpClient($this->curlMock);
     }
 
@@ -155,7 +155,7 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
             ->andReturn($this->fakeRawHeader . $this->fakeRawBody);
 
         $this->curlClient->sendRequest();
-        list($rawHeader, $rawBody) = $this->curlClient->extractResponseHeadersAndBody();
+        [$rawHeader, $rawBody] = $this->curlClient->extractResponseHeadersAndBody();
 
         $this->assertEquals($rawHeader, trim($this->fakeRawHeader));
         $this->assertEquals($rawBody, $this->fakeRawBody);
@@ -170,7 +170,7 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
             ->andReturn($rawHeader . $this->fakeRawBody);
 
         $this->curlClient->sendRequest();
-        list($rawHeaders, $rawBody) = $this->curlClient->extractResponseHeadersAndBody();
+        [$rawHeaders, $rawBody] = $this->curlClient->extractResponseHeadersAndBody();
 
         $this->assertEquals($rawHeaders, trim($rawHeader));
         $this->assertEquals($rawBody, $this->fakeRawBody);
@@ -185,7 +185,7 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
             ->andReturn($rawHeader . $this->fakeRawBody);
 
         $this->curlClient->sendRequest();
-        list($rawHeaders, $rawBody) = $this->curlClient->extractResponseHeadersAndBody();
+        [$rawHeaders, $rawBody] = $this->curlClient->extractResponseHeadersAndBody();
 
         $this->assertEquals($rawHeaders, trim($rawHeader));
         $this->assertEquals($rawBody, $this->fakeRawBody);
@@ -200,7 +200,7 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
             ->andReturn($rawHeader . $this->fakeRawBody);
 
         $this->curlClient->sendRequest();
-        list($rawHeaders, $rawBody) = $this->curlClient->extractResponseHeadersAndBody();
+        [$rawHeaders, $rawBody] = $this->curlClient->extractResponseHeadersAndBody();
 
         $this->assertEquals($rawHeaders, trim($rawHeader));
         $this->assertEquals($rawBody, $this->fakeRawBody);
@@ -215,7 +215,7 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
             ->andReturn($rawHeader . $this->fakeRawBody);
 
         $this->curlClient->sendRequest();
-        list($rawHeaders, $rawBody) = $this->curlClient->extractResponseHeadersAndBody();
+        [$rawHeaders, $rawBody] = $this->curlClient->extractResponseHeadersAndBody();
 
         $this->assertEquals($rawHeaders, trim($rawHeader));
         $this->assertEquals($rawBody, $this->fakeRawBody);
@@ -246,17 +246,15 @@ class FacebookCurlHttpClientTest extends AbstractTestHttpClient
 
         $response = $this->curlClient->send('http://foo.com/', 'GET', '', [], 60);
 
-        $this->assertInstanceOf('Facebook\Http\GraphRawResponse', $response);
+        $this->assertInstanceOf(\Facebook\Http\GraphRawResponse::class, $response);
         $this->assertEquals($this->fakeRawBody, $response->getBody());
         $this->assertEquals($this->fakeHeadersAsArray, $response->getHeaders());
         $this->assertEquals(200, $response->getHttpResponseCode());
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
     public function testThrowsExceptionOnClientError()
     {
+        $this->expectException(\Facebook\Exceptions\FacebookSDKException::class);
         $this->curlMock
             ->shouldReceive('init')
             ->once()

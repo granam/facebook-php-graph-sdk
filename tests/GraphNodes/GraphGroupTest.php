@@ -27,16 +27,16 @@ use Facebook\FacebookResponse;
 use Mockery as m;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-class GraphGroupTest extends \PHPUnit_Framework_TestCase
+class GraphGroupTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var FacebookResponse
      */
     protected $responseMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->responseMock = m::mock('\Facebook\FacebookResponse');
+        $this->responseMock = m::mock(\Facebook\FacebookResponse::class);
     }
 
     public function testCoverGetsCastAsGraphCoverPhoto()
@@ -53,7 +53,7 @@ class GraphGroupTest extends \PHPUnit_Framework_TestCase
         $graphNode = $factory->makeGraphGroup();
 
         $cover = $graphNode->getCover();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphCoverPhoto', $cover);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphCoverPhoto::class, $cover);
     }
 
     public function testVenueGetsCastAsGraphLocation()
@@ -70,6 +70,6 @@ class GraphGroupTest extends \PHPUnit_Framework_TestCase
         $graphNode = $factory->makeGraphGroup();
 
         $venue = $graphNode->getVenue();
-        $this->assertInstanceOf('\Facebook\GraphNodes\GraphLocation', $venue);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphLocation::class, $venue);
     }
 }

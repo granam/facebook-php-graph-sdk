@@ -25,7 +25,7 @@ namespace Facebook\Tests\Authentication;
 
 use Facebook\Authentication\AccessToken;
 
-class AccessTokenTest extends \PHPUnit_Framework_TestCase
+class AccessTokenTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
 
     public function testAnAccessTokenCanBeReturnedAsAString()

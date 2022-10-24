@@ -27,7 +27,7 @@ use Facebook\FacebookApp;
 use Facebook\Tests\Fixtures\FooSignedRequestHelper;
 use Facebook\Tests\Fixtures\FooSignedRequestHelperFacebookClient;
 
-class FacebookSignedRequestFromInputHelperTest extends \PHPUnit_Framework_TestCase
+class FacebookSignedRequestFromInputHelperTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var FooSignedRequestHelper
@@ -38,7 +38,7 @@ class FacebookSignedRequestFromInputHelperTest extends \PHPUnit_Framework_TestCa
     public $rawSignedRequestAuthorizedWithCode = 'oBtmZlsFguNQvGRETDYQQu1-PhwcArgbBBEK4urbpRA=.eyJjb2RlIjoiZm9vX2NvZGUiLCJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTQwNjMxMDc1MiwidXNlcl9pZCI6IjEyMyJ9';
     public $rawSignedRequestUnauthorized = 'KPlyhz-whtYAhHWr15N5TkbS_avz-2rUJFpFkfXKC88=.eyJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTQwMjU1MTA4Nn0=';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->helper = new FooSignedRequestHelper($app, new FooSignedRequestHelperFacebookClient());
@@ -75,7 +75,7 @@ class FacebookSignedRequestFromInputHelperTest extends \PHPUnit_Framework_TestCa
         $this->helper->instantiateSignedRequest($this->rawSignedRequestAuthorizedWithAccessToken);
         $accessToken = $this->helper->getAccessToken();
 
-        $this->assertInstanceOf('Facebook\Authentication\AccessToken', $accessToken);
+        $this->assertInstanceOf(\Facebook\Authentication\AccessToken::class, $accessToken);
         $this->assertEquals('foo_token', $accessToken->getValue());
     }
 
@@ -84,7 +84,7 @@ class FacebookSignedRequestFromInputHelperTest extends \PHPUnit_Framework_TestCa
         $this->helper->instantiateSignedRequest($this->rawSignedRequestAuthorizedWithCode);
         $accessToken = $this->helper->getAccessToken();
 
-        $this->assertInstanceOf('Facebook\Authentication\AccessToken', $accessToken);
+        $this->assertInstanceOf(\Facebook\Authentication\AccessToken::class, $accessToken);
         $this->assertEquals('foo_access_token_from:foo_code', $accessToken->getValue());
     }
 }

@@ -27,14 +27,14 @@ use Facebook\FacebookApp;
 use Facebook\FacebookRequest;
 use Facebook\FacebookResponse;
 
-class FacebookResponseTest extends \PHPUnit_Framework_TestCase
+class FacebookResponseTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
     /**
      * @var \Facebook\FacebookRequest
      */
     protected $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $app = new FacebookApp('123', 'foo_secret');
         $this->request = new FacebookRequest(
@@ -79,7 +79,7 @@ class FacebookResponseTest extends \PHPUnit_Framework_TestCase
             'id' => '123',
             'name' => 'Foo',
         ], $decodedResponse);
-        $this->assertInstanceOf('Facebook\GraphNodes\GraphNode', $graphNode);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphNode);
     }
 
     public function testASuccessfulJsonResponseWillBeDecodedToAGraphEdge()
@@ -90,8 +90,8 @@ class FacebookResponseTest extends \PHPUnit_Framework_TestCase
         $graphEdge = $response->getGraphEdge();
 
         $this->assertFalse($response->isError(), 'Did not expect Response to return an error.');
-        $this->assertInstanceOf('Facebook\GraphNodes\GraphNode', $graphEdge[0]);
-        $this->assertInstanceOf('Facebook\GraphNodes\GraphNode', $graphEdge[1]);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphEdge[0]);
+        $this->assertInstanceOf(\Facebook\GraphNodes\GraphNode::class, $graphEdge[1]);
     }
 
     public function testASuccessfulUrlEncodedKeyValuePairResponseWillBeDecoded()
@@ -116,6 +116,6 @@ class FacebookResponseTest extends \PHPUnit_Framework_TestCase
         $exception = $response->getThrownException();
 
         $this->assertTrue($response->isError(), 'Expected Response to return an error.');
-        $this->assertInstanceOf('Facebook\Exceptions\FacebookResponseException', $exception);
+        $this->assertInstanceOf(\Facebook\Exceptions\FacebookResponseException::class, $exception);
     }
 }

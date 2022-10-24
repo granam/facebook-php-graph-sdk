@@ -34,7 +34,7 @@ class FooSignedRequestHelperFacebookClient extends FacebookClient
         $params = $request->getParams();
         $rawResponse = json_encode([
             'access_token' => 'foo_access_token_from:' . $params['code'],
-        ]);
+        ], JSON_THROW_ON_ERROR);
 
         return new FacebookResponse($request, $rawResponse, 200);
     }
